@@ -1,0 +1,2470 @@
+:root {
+    --primary-gradient: linear-gradient(135deg, 
+        #0F172A 0%,
+        #1E293B 25%,
+        #252B3B 50%,
+        #1A1F2E 75%,
+        #0F172A 100%
+    );
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --input-bg: rgba(255, 255, 255, 0.03);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --border-color: rgba(255, 255, 255, 0.12);
+    --shadow-color: rgba(0, 0, 0, 0.4);
+    --container-width: min(95%, 500px);
+    --container-height: auto;
+    --min-container-height: auto;
+    --gap-between: 1rem;
+    --padding-container: 1rem;
+    --font-size-base: 0.9rem;
+    --font-size-heading: 1.2rem;
+    --select-arrow: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    --glow-color: rgba(99, 102, 241, 0.4);
+    --cursor-x: 50%;
+    --cursor-y: 50%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity, background, box-shadow;
+}
+
+/* Optimasi hover untuk container dan section */
+.container, .input-section, .output-section {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.4s ease;
+}
+
+/* Optimasi hover untuk button dan input */
+button, input, textarea, .copy-button, .method-option {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background-color 0.3s ease,
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
+}
+
+/* Optimasi hover untuk text dan efek glow */
+.typing-effect, .glow-effect, label {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                text-shadow 0.4s ease,
+                color 0.4s ease;
+}
+
+html {
+    height: 100%;
+    font-size: 16px;
+}
+
+body {
+    min-height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--primary-gradient);
+    background-size: 400% 400%;
+    background-attachment: fixed;
+    color: var(--text-primary);
+    font-family: 'Space Grotesk', sans-serif;
+    padding: 1rem;
+    animation: gradient-animation 15s ease infinite;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        circle 800px at var(--cursor-x) var(--cursor-y),
+        rgba(99, 102, 241, 0.15),
+        rgba(99, 102, 241, 0.05) 20%,
+        transparent 40%
+    ),
+    radial-gradient(
+        circle 600px at calc(var(--cursor-x) - 200px) calc(var(--cursor-y) - 200px),
+        rgba(59, 130, 246, 0.1),
+        transparent 40%
+    );
+    pointer-events: none;
+    z-index: 1;
+    transition: background 0.2s ease;
+    mix-blend-mode: screen;
+}
+
+@keyframes gradient-animation {
+    0% {
+        background-position: 0% 50%;
+        background-size: 120% 120%;
+    }
+    50% {
+        background-position: 100% 50%;
+        background-size: 200% 200%;
+    }
+    100% {
+        background-position: 0% 50%;
+        background-size: 120% 120%;
+    }
+}
+
+@keyframes gradient-shift {
+    0% {
+        transform: rotate(0deg);
+        opacity: 0.5;
+    }
+    50% {
+        transform: rotate(180deg);
+        opacity: 0.3;
+    }
+    100% {
+        transform: rotate(360deg);
+        opacity: 0.5;
+    }
+}
+
+.main-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    gap: var(--gap-between);
+    padding: var(--padding-container);
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto 2rem auto;
+}
+
+.container {
+    width: var(--container-width);
+    min-height: var(--min-container-height);
+    height: var(--container-height);
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: var(--padding-container);
+    position: relative;
+    overflow: hidden;
+    will-change: transform;
+    flex: 1;
+}
+
+.container.input-container, .container.output-container {
+    width: 50%;
+    max-width: 600px;
+    min-width: 300px;
+}
+
+.input-section, .output-section {
+    height: 100%;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+#result, #text-input {
+    flex: 1;
+    min-height: 200px;
+}
+
+@media (max-width: 1200px) {
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .container.input-container, .container.output-container {
+        width: var(--container-width);
+        max-width: 500px;
+    }
+    
+    .input-section, .output-section {
+        min-height: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container.input-container, .container.output-container {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .input-section, .output-section {
+        min-height: 300px;
+    }
+    
+    #result, #text-input {
+        min-height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .input-section, .output-section {
+        min-height: 250px;
+    }
+    
+    #result, #text-input {
+        min-height: 120px;
+    }
+}
+
+.container.input-container {
+    animation: slide-in-left 0.5s ease-out;
+}
+
+.container.output-container {
+    animation: slide-in-right 0.5s ease-out;
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes slide-in-left {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-in-right {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+        circle at center,
+        rgba(99, 102, 241, 0.08) 0%,
+        rgba(59, 130, 246, 0.05) 30%,
+        transparent 70%
+    );
+    animation: gradient-shift 15s linear infinite;
+}
+
+/* Efek Typing untuk heading */
+.typing-effect {
+    font-size: var(--font-size-heading);
+    text-align: center;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.typing-effect:hover {
+    transform: translateY(-2px) scale(1.02);
+    background: linear-gradient(120deg, 
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0) 100%);
+    border-radius: 8px;
+    text-shadow: 
+        0 0 10px var(--glow-color),
+        0 0 20px var(--glow-color),
+        0 0 30px var(--glow-color);
+    letter-spacing: 1px;
+}
+
+.typing-effect::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    left: -100%;
+    top: 0;
+    transition: 0.5s;
+}
+
+.typing-effect:hover::before {
+    left: 100%;
+    animation: shine 1.5s ease-out infinite;
+}
+
+@keyframes shine {
+    0% {
+        left: -100%;
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        left: 100%;
+        opacity: 0;
+    }
+}
+
+.typing-effect::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg,
+        transparent,
+        var(--glow-color),
+        transparent
+    );
+    bottom: -2px;
+    left: 0;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.typing-effect:hover::after {
+    transform: scaleX(1);
+}
+
+/* Tambahkan animasi pulse saat hover */
+@keyframes pulse {
+    0% {
+        transform: translateY(-2px) scale(1);
+    }
+    50% {
+        transform: translateY(-2px) scale(1.02);
+    }
+    100% {
+        transform: translateY(-2px) scale(1);
+    }
+}
+
+.typing-effect:hover {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: var(--text-primary) }
+}
+
+/* Efek glow untuk label */
+.glow-effect {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 8px var(--glow-color);
+    letter-spacing: 0.5px;
+}
+
+/* Efek untuk input saat mengetik */
+.typing-input {
+    font-family: 'Fira Code', monospace !important;
+    letter-spacing: 0.5px;
+    caret-color: var(--glow-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.typing-input::selection {
+    background: rgba(99, 102, 241, 0.3);
+    color: #fff;
+}
+
+.typing-input:focus {
+    animation: glow-pulse 1.5s ease-in-out infinite;
+    background: rgba(255, 255, 255, 0.07);
+}
+
+/* Efek ketikan */
+@keyframes text-flicker {
+    0% { opacity: 0.8; text-shadow: 0 0 10px var(--glow-color); }
+    50% { opacity: 1; text-shadow: 0 0 5px var(--glow-color); }
+    100% { opacity: 0.8; text-shadow: 0 0 10px var(--glow-color); }
+}
+
+.typing-input:not(:placeholder-shown) {
+    animation: text-flicker 2s linear infinite;
+    text-shadow: 0 0 5px var(--glow-color);
+}
+
+/* Style untuk placeholder */
+.typing-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.typing-input:focus::placeholder {
+    opacity: 0.3;
+    transform: translateX(10px);
+}
+
+/* Efek highlight saat mengetik */
+@keyframes highlight-line {
+    from { background-position: -100% 0; }
+    to { background-position: 200% 0; }
+}
+
+.typing-input:focus {
+    background: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+    background-size: 200% 100%;
+    animation: 
+        glow-pulse 1.5s ease-in-out infinite,
+        highlight-line 3s linear infinite;
+}
+
+/* Efek untuk karakter yang diketik */
+.typing-input:not(:placeholder-shown) {
+    letter-spacing: 1px;
+    font-weight: 500;
+    background-clip: text;
+    -webkit-background-clip: text;
+    transition: all 0.3s ease;
+}
+
+/* Efek scroll yang smooth */
+.typing-input {
+    scrollbar-width: thin;
+    scrollbar-color: var(--glow-color) rgba(255, 255, 255, 0.1);
+}
+
+.typing-input::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.typing-input::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.typing-input::-webkit-scrollbar-thumb {
+    background: var(--glow-color);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.typing-input::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.8);
+}
+
+/* Efek untuk output text */
+.output-text {
+    font-family: 'Fira Code', monospace !important;
+    letter-spacing: 0.5px;
+    line-height: 1.6;
+    transition: all 0.3s ease;
+}
+
+.output-text:not(:empty) {
+    animation: text-appear 0.5s ease-out;
+}
+
+@keyframes text-appear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Efek untuk selection text */
+::selection {
+    background: rgba(99, 102, 241, 0.3);
+    color: #fff;
+    text-shadow: 0 0 8px var(--glow-color);
+}
+
+h1 {
+    text-align: center;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    font-weight: 700;
+    color: var(--text-primary);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    letter-spacing: -0.5px;
+    position: relative;
+    z-index: 1;
+}
+
+.input-section, .output-section {
+    background: var(--input-bg);
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    flex: 1;
+    height: auto;
+}
+
+.input-section:hover, .output-section:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(99, 102, 241, 0.15);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+label:hover {
+    color: var(--text-primary);
+    text-shadow: 0 0 5px var(--glow-color);
+}
+
+textarea, input, select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    font-size: var(--font-size-base);
+    transition: all 0.3s ease;
+    color: var(--text-primary);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+textarea:hover, input:hover, select:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
+    background: rgba(255, 255, 255, 0.07);
+}
+
+textarea {
+    flex: 1;
+    resize: none;
+    min-height: 150px;
+    line-height: 1.4;
+    padding: 0.8rem;
+}
+
+textarea:focus, input:focus, select:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 0 4px var(--shadow-color);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Style untuk tombol enkripsi/dekripsi */
+.button-group {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: auto;
+    padding: 0.5rem;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+.button-group button {
+    flex: 1;
+    padding: 0.8rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--text-primary);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    text-transform: uppercase;
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.1),
+        0 1px 2px rgba(255, 255, 255, 0.1);
+}
+
+.button-group button i {
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+}
+
+.button-group button:hover {
+    background: rgba(99, 102, 241, 0.25);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+.button-group button:hover i {
+    animation: spin 1s ease-in-out infinite;
+}
+
+.button-group button:active {
+    transform: translateY(1px);
+    background: rgba(99, 102, 241, 0.3);
+    box-shadow: 
+        0 2px 10px rgba(0, 0, 0, 0.2),
+        0 1px 2px rgba(255, 255, 255, 0.1);
+}
+
+#result {
+    min-height: 350px;
+    font-family: 'Fira Code', monospace;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    line-height: 1.6;
+}
+
+#result:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 0 4px var(--shadow-color);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Style untuk tombol copy yang dioptimalkan */
+.copy-button {
+    position: relative;
+    padding: 0.7rem;
+    border-radius: 12px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-width: 44px;
+    height: 44px;
+    z-index: 30;
+    pointer-events: auto;
+}
+
+.copy-button i {
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.8);
+    pointer-events: none;
+}
+
+.copy-button:hover {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 
+        0 4px 12px rgba(99, 102, 241, 0.2),
+        0 0 0 1px rgba(99, 102, 241, 0.2);
+}
+
+.copy-button:hover i {
+    transform: scale(1.1);
+    color: var(--text-primary);
+}
+
+.copy-button:active {
+    transform: scale(0.95);
+}
+
+.copy-button.success {
+    background: rgba(72, 187, 120, 0.15);
+    border-color: rgba(72, 187, 120, 0.3);
+    animation: success-pulse 1.5s ease-in-out;
+}
+
+.copy-button.success i {
+    color: #48bb78;
+    animation: success-spin 0.5s ease-out;
+}
+
+@keyframes success-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(72, 187, 120, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(72, 187, 120, 0); }
+}
+
+@keyframes success-spin {
+    0% { transform: scale(1) rotate(0); }
+    50% { transform: scale(1.2) rotate(180deg); }
+    100% { transform: scale(1) rotate(360deg); }
+}
+
+/* Style untuk toast notification yang dioptimalkan */
+.toast {
+    position: fixed;
+    top: 20px; /* Ubah dari bottom ke top */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    max-width: 90%;
+    width: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.toast.show {
+    opacity: 1;
+    visibility: visible;
+    animation: toast-in-top 0.5s ease forwards;
+}
+
+.toast.hide {
+    opacity: 0;
+    visibility: hidden;
+    animation: toast-out-top 0.3s ease forwards;
+}
+
+@keyframes toast-in-top {
+    0% {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes toast-out-top {
+    0% {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+}
+
+/* Media queries untuk responsivitas */
+@media (max-width: 768px) {
+    .toast {
+        font-size: 0.85rem;
+        padding: 10px 20px;
+        top: 16px;
+        max-width: 85%;
+    }
+}
+
+@media (max-height: 500px) {
+    .toast {
+        top: 12px;
+        padding: 8px 16px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Untuk tablet dalam mode landscape */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .toast {
+        top: 24px;
+        max-width: 80%;
+        font-size: 0.95rem;
+    }
+}
+
+/* Untuk perangkat dengan layar sangat kecil */
+@media screen and (max-height: 400px) {
+    .toast {
+        top: 8px;
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .toast {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Style untuk output header */
+.output-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 20;
+}
+
+@media (max-width: 1200px) {
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --container-width: 100%;
+        --padding-container: 0.8rem;
+        --gap-between: 1rem;
+    }
+
+    body {
+        padding: 0.5rem;
+    }
+
+    .main-content {
+        flex-direction: column;
+        padding: 0.5rem;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .container {
+        width: 100%;
+        max-width: none;
+        min-height: auto;
+        margin: 0;
+        padding: var(--padding-container);
+        border-radius: 12px;
+    }
+
+    .input-section, .output-section {
+        padding: 0.8rem;
+        gap: 0.6rem;
+        border-radius: 10px;
+        height: auto;
+    }
+
+    textarea {
+        min-height: 120px;
+        height: 120px;
+    }
+
+    #result {
+        min-height: 120px;
+        height: 120px;
+    }
+
+    .button-group {
+        padding: 0.4rem;
+        gap: 0.5rem;
+        flex-direction: row;
+    }
+
+    .button-group button {
+        padding: 0.7rem;
+        font-size: 0.85rem;
+        gap: 0.4rem;
+        border-radius: 8px;
+        height: 44px;
+    }
+
+    .helper-container {
+        padding: 0.8rem 0.5rem;
+    }
+
+    .helper-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        padding: 0;
+    }
+
+    .helper-text {
+        font-size: 0.95rem;
+        padding: 1rem;
+    }
+
+    .helper-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --min-container-height: 450px;
+        --padding-container: 0.8rem;
+    }
+    
+    .input-section, .output-section {
+        height: 400px;
+        padding: 0.8rem;
+    }
+    
+    textarea {
+        min-height: 120px;
+    }
+    
+    .button-group button {
+        padding: 0.8rem;
+        font-size: 0.85rem;
+    }
+    
+    .typing-effect {
+        font-size: var(--font-size-heading);
+    }
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
+    .main-content {
+        flex-direction: row;
+        align-items: stretch;
+        height: auto;
+        padding: 0.8rem;
+    }
+
+    .container {
+        min-height: 400px;
+        margin-bottom: 0;
+    }
+
+    .input-section, .output-section {
+        gap: 0.5rem;
+    }
+
+    textarea {
+        min-height: 100px;
+    }
+
+    .helper-container {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+    body {
+        padding: 1.5rem;
+    }
+
+    .container {
+        width: 80%;
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .container, .modal-content, .helper-text {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+}
+
+@media (max-width: 320px) {
+    :root {
+        --container-width: 98%;
+    }
+
+    body {
+        padding: 0.5rem;
+    }
+
+    .container {
+        padding: 0.8rem;
+        gap: 0.8rem;
+    }
+
+    textarea, input, select {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+    }
+
+    .button-group button {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (min-width: 1400px) {
+    :root {
+        --container-width: clamp(400px, 40%, 700px);
+    }
+
+    .typing-effect {
+        font-size: 2rem;
+    }
+
+    textarea, input, select {
+        font-size: 1.1rem;
+    }
+
+    .button-group button {
+        font-size: 1.1rem;
+        padding: 1.2rem;
+    }
+}
+
+@media (hover: none) {
+    button:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .input-section:hover, .output-section:hover {
+        transform: none;
+    }
+
+    select, input, button {
+        min-height: 44px;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --shadow-color: rgba(99, 102, 241, 0.3);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition-duration: 0.001ms !important;
+        animation-duration: 0.001ms !important;
+    }
+}
+
+::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.5;
+}
+
+/* Style untuk select dropdown */
+select#cipher-method {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-family: 'Fira Code', monospace;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-image: var(--select-arrow);
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+    padding-right: 3rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+select#cipher-method option {
+    background-color: rgba(30, 41, 59, 0.95);
+    color: var(--text-primary);
+    padding: 1rem;
+    font-size: 0.95rem;
+    font-family: 'Fira Code', monospace;
+    border: none;
+}
+
+select#cipher-method:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 
+        0 4px 12px rgba(99, 102, 241, 0.15),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+select#cipher-method:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 
+        0 0 0 3px var(--shadow-color),
+        inset 0 0 8px rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.select-wrapper {
+    position: relative;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.select-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 2.5rem;
+    pointer-events: none;
+    background: linear-gradient(
+        to left,
+        rgba(99, 102, 241, 0.1) 0%,
+        transparent 100%
+    );
+    border-radius: 0 12px 12px 0;
+    z-index: 1;
+}
+
+.select-wrapper:hover::after {
+    background: linear-gradient(
+        to left,
+        rgba(99, 102, 241, 0.2) 0%,
+        transparent 100%
+    );
+}
+
+/* Style untuk option saat hover dan focus */
+select#cipher-method option:hover,
+select#cipher-method option:focus {
+    background-color: rgba(99, 102, 241, 0.2);
+}
+
+/* Style untuk selected option */
+select#cipher-method option:checked {
+    background-color: rgba(99, 102, 241, 0.3);
+    color: white;
+}
+
+/* Animasi saat dropdown dibuka */
+select#cipher-method:focus option {
+    animation: option-appear 0.2s ease-out forwards;
+}
+
+@keyframes option-appear {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Style untuk Select2 */
+.select2-container {
+    width: 100% !important;
+    margin-bottom: 1rem;
+}
+
+.select2-container--default .select2-selection--single {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 16px !important;
+    height: 3rem !important;
+    display: flex !important;
+    align-items: center !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--text-primary) !important;
+    padding-left: 1rem !important;
+    line-height: 3rem !important;
+    font-family: 'Fira Code', monospace !important;
+    letter-spacing: 0.5px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 3rem !important;
+    width: 3rem !important;
+    right: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(
+        to left,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    ) !important;
+    border-radius: 0 16px 16px 0 !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: var(--text-primary) transparent transparent transparent !important;
+    border-width: 6px 6px 0 6px !important;
+}
+
+.select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+    border-color: transparent transparent var(--text-primary) transparent !important;
+    border-width: 0 6px 6px 6px !important;
+}
+
+.select2-dropdown {
+    background: rgba(74, 85, 104, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+.select2-container--default .select2-results__option {
+    padding: 0.8rem 1rem !important;
+    color: var(--text-primary) !important;
+    font-family: 'Fira Code', monospace !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.2s ease !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: var(--text-primary) !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true] {
+    background: rgba(99, 102, 241, 0.3) !important;
+}
+
+.select2-search--dropdown {
+    padding: 0.5rem !important;
+    background: rgba(0, 0, 0, 0.1) !important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    color: var(--text-primary) !important;
+    font-family: 'Fira Code', monospace !important;
+    padding: 0.5rem !important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field:focus {
+    outline: none !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 0 0 2px var(--shadow-color) !important;
+}
+
+/* Animasi untuk dropdown */
+.select2-container--default.select2-container--open .select2-dropdown {
+    animation: dropdown-appear 0.2s ease-out !important;
+}
+
+@keyframes dropdown-appear {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Style untuk Choices.js */
+.choices {
+    margin-bottom: 1rem;
+}
+
+.choices__inner {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 16px !important;
+    min-height: 3rem;
+    padding: 0.5rem 1rem;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.choices__list--single {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    min-height: 2rem;
+}
+
+.choices__list--dropdown {
+    background: rgba(74, 85, 104, 0.95);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    margin-top: 4px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.choices__list--dropdown .choices__item {
+    padding: 0.8rem 1rem;
+    color: var(--text-primary);
+    font-family: 'Fira Code', monospace;
+    letter-spacing: 0.5px;
+}
+
+.choices__list--dropdown .choices__item--selectable {
+    padding-right: 1rem;
+}
+
+.choices__list--dropdown .choices__item--selectable.is-highlighted {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.choices[data-type*="select-one"]:after {
+    border-color: var(--text-primary) transparent transparent transparent;
+    border-width: 6px;
+    right: 1rem;
+}
+
+.choices[data-type*="select-one"].is-open:after {
+    border-color: transparent transparent var(--text-primary) transparent;
+}
+
+.choices__list--dropdown .choices__item--selectable:after {
+    display: none;
+}
+
+.choices__item {
+    color: var(--text-primary);
+    font-family: 'Fira Code', monospace;
+    letter-spacing: 0.5px;
+}
+
+/* Animasi untuk dropdown */
+.choices__list--dropdown {
+    animation: choices-dropdown-appear 0.2s ease-out;
+}
+
+@keyframes choices-dropdown-appear {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hover effects */
+.choices:hover .choices__inner {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.1),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.choices.is-focused .choices__inner {
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 
+        0 0 0 4px var(--shadow-color),
+        inset 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+    .choices__inner {
+        min-height: 2.8rem;
+    }
+
+    .choices__list--dropdown .choices__item {
+        padding: 0.7rem 1rem;
+        font-size: 0.95rem;
+    }
+}
+
+/* Style untuk char counter */
+.char-counter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.3rem;
+}
+
+.counter {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-family: 'Fira Code', monospace;
+}
+
+.char-counter:hover .counter {
+    color: var(--text-primary);
+}
+
+/* Style untuk key input wrapper */
+.key-input-wrapper {
+    position: relative;
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+}
+
+/* Menghilangkan tombol spinner pada input number */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield; /* Firefox */
+    appearance: textfield;
+}
+
+.generate-key {
+    padding: 0 1rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.generate-key:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+}
+
+.generate-key:active i {
+    animation: spin 0.5s ease-in-out;
+}
+
+/* Style untuk toast notification yang dioptimalkan */
+.toast {
+    position: fixed;
+    top: 20px; /* Ubah dari bottom ke top */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    max-width: 90%;
+    width: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.toast.show {
+    opacity: 1;
+    visibility: visible;
+    animation: toast-in-top 0.5s ease forwards;
+}
+
+.toast.hide {
+    opacity: 0;
+    visibility: hidden;
+    animation: toast-out-top 0.3s ease forwards;
+}
+
+@keyframes toast-in-top {
+    0% {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes toast-out-top {
+    0% {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+}
+
+/* Media queries untuk responsivitas */
+@media (max-width: 768px) {
+    .toast {
+        font-size: 0.85rem;
+        padding: 10px 20px;
+        top: 16px;
+        max-width: 85%;
+    }
+}
+
+@media (max-height: 500px) {
+    .toast {
+        top: 12px;
+        padding: 8px 16px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Untuk tablet dalam mode landscape */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .toast {
+        top: 24px;
+        max-width: 80%;
+        font-size: 0.95rem;
+    }
+}
+
+/* Untuk perangkat dengan layar sangat kecil */
+@media screen and (max-height: 400px) {
+    .toast {
+        top: 8px;
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .toast {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Animasi untuk output hasil konversi */
+@keyframes result-appear {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+        filter: blur(8px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+#result:not(:empty) {
+    animation: result-appear 0.5s ease-out forwards;
+}
+
+.output-section {
+    background: var(--input-bg);
+    border-radius: 20px;
+    padding: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    flex: 1;
+    border: 1px solid var(--glass-border);
+    overflow: hidden;
+}
+
+.output-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.output-section:has(#result:not(:empty))::after {
+    opacity: 1;
+    animation: gradient-shift 2s ease-in-out infinite;
+}
+
+@keyframes gradient-shift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Animasi untuk status message */
+.status-message {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.status-message:not(:empty) {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Style untuk teks bantuan */
+.helper-container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.helper-section {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 0 1rem;
+}
+
+.helper-text {
+    position: relative;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.5;
+    background: var(--glass-bg);
+    padding: 1.2rem;
+    border-radius: 16px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    height: fit-content;
+    will-change: transform;
+}
+
+.helper-title {
+    font-size: 1.8rem;
+    margin: 1rem 0;
+    text-align: center;
+    color: var(--text-primary);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 1200px) {
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .helper-container {
+        padding: 1rem;
+    }
+    
+    .helper-section {
+        grid-template-columns: 1fr;
+        padding: 0 0.5rem;
+    }
+    
+    .helper-text {
+        font-size: 0.95rem;
+        padding: 1rem;
+    }
+    
+    .helper-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* Efek hover untuk container */
+.container:hover {
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Efek hover untuk copy button */
+.copy-button:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-1px);
+}
+
+/* Efek hover untuk generate key button */
+.generate-key:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+}
+
+.generate-key:hover i {
+    animation: spin 1s ease-in-out infinite;
+}
+
+/* Efek hover untuk char counter */
+.char-counter:hover .counter {
+    color: var(--text-primary);
+}
+
+/* Efek hover untuk select wrapper */
+.select-wrapper:hover::after {
+    background: linear-gradient(
+        to left,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 100%
+    );
+}
+
+/* Efek hover untuk heading */
+.typing-effect:hover {
+    text-shadow: 0 0 8px var(--glow-color);
+}
+
+/* Efek hover untuk input section dan output section */
+.input-section:hover, .output-section:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(99, 102, 241, 0.15);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Efek hover untuk status message */
+.status-message:hover {
+    color: var(--text-primary);
+}
+
+/* Efek hover untuk toast */
+.toast:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Style untuk footer copyright */
+.copyright-footer {
+    width: 100%;
+    padding: 1.5rem 0;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    margin-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    will-change: transform;
+}
+
+.copyright-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.author-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.author-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-shadow: 0 0 10px var(--glow-color);
+}
+
+.author-npm {
+    font-family: 'Fira Code', monospace;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+.copyright-text {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.copyright-text i {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+    0% { text-shadow: 0 0 5px var(--glow-color); }
+    50% { text-shadow: 0 0 15px var(--glow-color), 0 0 30px var(--glow-color); }
+    100% { text-shadow: 0 0 5px var(--glow-color); }
+}
+
+/* Responsive design untuk footer */
+@media (max-width: 768px) {
+    .copyright-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+
+    .author-info {
+        align-items: center;
+    }
+
+    .social-links {
+        align-items: center;
+    }
+
+    .copyright-text {
+        justify-content: center;
+    }
+}
+
+/* Style untuk social links */
+.social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.social-link i {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.social-link:hover {
+    color: var(--text-primary);
+    transform: translateX(3px);
+}
+
+.social-link:hover i {
+    transform: scale(1.1);
+}
+
+.social-link:hover i.fa-instagram {
+    color: #E1306C;
+    text-shadow: 0 0 10px rgba(225, 48, 108, 0.5);
+}
+
+.social-link:hover i.fa-github {
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* Style untuk modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.modal.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    position: relative;
+    background: linear-gradient(
+        135deg,
+        rgba(30, 41, 59, 0.98),
+        rgba(15, 23, 42, 0.98)
+    );
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: min(90vw, 500px);
+    max-height: min(85vh, 600px);
+    overflow-y: auto;
+    margin: 2rem auto;
+    transform: scale(0.95) translateY(-30px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.modal.show .modal-content {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+.modal-header {
+    position: sticky;
+    top: 0;
+    background: inherit;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    z-index: 2;
+}
+
+.modal-header h3 {
+    color: var(--text-primary);
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.close-modal {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+}
+
+.close-modal:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+.close-modal:active {
+    transform: scale(0.95);
+}
+
+.modal-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Style untuk opsi metode dalam modal */
+.method-option {
+    padding: 1.2rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(0);
+    opacity: 0;
+    animation: slide-in 0.3s ease forwards;
+}
+
+.method-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(99, 102, 241, 0.2);
+}
+
+.method-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.method-info i {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.method-text {
+    flex: 1;
+}
+
+.method-text h4 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+}
+
+.method-text p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.method-option.selected {
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.method-option.selected .method-info i {
+    background: rgba(99, 102, 241, 0.2);
+    color: #fff;
+    text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}
+
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Style untuk tombol pemilihan metode */
+.method-button-container {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(
+        to bottom,
+        rgba(15, 23, 42, 0.95),
+        rgba(15, 23, 42, 0.85)
+    );
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.method-button-container label {
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding-left: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.method-button-container label:hover {
+    color: var(--text-primary);
+    text-shadow: 0 0 8px var(--glow-color);
+}
+
+.method-select-button {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.method-select-button i {
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.method-select-button:hover {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 
+        0 4px 12px rgba(99, 102, 241, 0.2),
+        0 0 0 1px rgba(99, 102, 241, 0.2);
+}
+
+.method-select-button:hover i {
+    transform: translateX(3px);
+    color: var(--text-primary);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .modal {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .modal-content {
+        width: 100%;
+        max-height: 90vh;
+        margin: 0;
+        border-radius: 20px 20px 0 0;
+        transform: translateY(100%);
+    }
+
+    .modal.show .modal-content {
+        transform: translateY(0);
+    }
+}
+
+/* Touch device optimization untuk modal */
+@media (hover: none) {
+    .modal-content {
+        transform: translateY(100%);
+    }
+
+    .modal.show .modal-content {
+        transform: translateY(0);
+    }
+}
+
+/* Scrollbar styling untuk modal */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.3);
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.5);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+/* Pastikan modal tetap di atas semua konten */
+body.modal-open {
+    overflow: hidden;
+    padding-right: var(--scrollbar-width, 0px);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+/* Mobile-first variables */
+:root {
+    --container-width: min(95%, 500px);
+    --min-container-height: auto;
+    --gap-between: 1rem;
+    --padding-container: 1rem;
+    --font-size-base: 0.9rem;
+    --font-size-heading: 1.2rem;
+}
+
+/* Mobile-optimized styles */
+@media (max-width: 768px) {
+    :root {
+        --container-width: 100%;
+        --padding-container: 0.8rem;
+        --gap-between: 1rem;
+    }
+
+    body {
+        padding: 0.5rem;
+    }
+
+    .main-content {
+        flex-direction: column;
+        padding: 0.5rem;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .container {
+        width: 100%;
+        max-width: none;
+        min-height: auto;
+        margin: 0;
+        padding: var(--padding-container);
+        border-radius: 12px;
+    }
+
+    .input-section, .output-section {
+        padding: 0.8rem;
+        gap: 0.6rem;
+        border-radius: 10px;
+        height: auto;
+    }
+
+    textarea {
+        min-height: 120px;
+        height: 120px;
+    }
+
+    #result {
+        min-height: 120px;
+        height: 120px;
+    }
+
+    .button-group {
+        padding: 0.4rem;
+        gap: 0.5rem;
+        flex-direction: row;
+    }
+
+    .button-group button {
+        padding: 0.7rem;
+        font-size: 0.85rem;
+        gap: 0.4rem;
+        border-radius: 8px;
+        height: 44px;
+    }
+
+    .helper-container {
+        padding: 0.8rem 0.5rem;
+    }
+
+    .helper-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        padding: 0;
+    }
+
+    .helper-text {
+        padding: 0.8rem;
+        font-size: 0.85rem;
+        border-radius: 10px;
+        margin: 0;
+    }
+
+    .copyright-footer {
+        padding: 1rem 0;
+        margin-top: 1rem;
+    }
+
+    .copyright-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.8rem;
+        padding: 0 1rem;
+    }
+
+    .social-links {
+        align-items: center;
+    }
+
+    .toast {
+        left: 0.5rem;
+        right: 0.5rem;
+        bottom: 0.5rem;
+        padding: 0.8rem;
+        border-radius: 8px;
+    }
+}
+
+/* Tablet optimization */
+@media (min-width: 481px) and (max-width: 768px) {
+    :root {
+        --container-width: min(90%, 500px);
+        --padding-container: 1.2rem;
+        --font-size-base: 0.95rem;
+        --font-size-heading: 1.3rem;
+    }
+
+    body {
+        padding: 1rem;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+
+    textarea {
+        min-height: 140px;
+    }
+
+    #result {
+        min-height: 200px;
+    }
+}
+
+/* Touch device optimization */
+@media (hover: none) {
+    .button-group button:active,
+    .copy-button:active,
+    .method-option:active,
+    .social-link:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+    
+    .input-section:hover,
+    .output-section:hover,
+    .container:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .typing-effect:hover {
+        transform: none;
+        animation: none;
+    }
+
+    input, button, select, textarea {
+        font-size: 16px !important; /* Prevent zoom on iOS */
+    }
+}
+
+/* Ensure minimum touch target sizes */
+@media (pointer: coarse) {
+    button,
+    .copy-button,
+    .method-option,
+    input[type="text"],
+    input[type="number"],
+    select {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .method-option {
+        padding: 12px;
+    }
+
+    .close-modal {
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 360px) {
+    :root {
+        --padding-container: 0.6rem;
+    }
+
+    body {
+        padding: 0.3rem;
+    }
+
+    .main-content {
+        padding: 0.3rem;
+        gap: 0.8rem;
+    }
+
+    .container {
+        border-radius: 10px;
+    }
+
+    .input-section, .output-section {
+        padding: 0.6rem;
+    }
+
+    textarea, #result {
+        min-height: 100px;
+        height: 100px;
+    }
+
+    .button-group button {
+        font-size: 0.8rem;
+        padding: 0.6rem;
+    }
+}
+
+/* Pastikan modal tetap di atas semua konten */
+body.modal-open {
+    overflow: hidden;
+    padding-right: var(--scrollbar-width, 0px); /* Mencegah layout shift */
+} 

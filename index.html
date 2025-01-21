@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Konversi Kriptografi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome untuk icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container input-container">
+            <h1 class="typing-effect">Konversi Kriptografi</h1>
+            <div class="input-section">
+                <div class="method-button-container">
+                    <label for="method-select-btn" class="glow-effect">Pilih Metode:</label>
+                    <button id="method-select-btn" class="method-select-button">
+                        <span id="selected-method">Caesar Cipher</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="char-counter">
+                    <label for="text-input" class="glow-effect">Masukkan Teks:</label>
+                    <span class="counter">0 karakter</span>
+                </div>
+                <textarea id="text-input" class="typing-input" placeholder="Ketik teks di sini..." spellcheck="false"></textarea>
+                
+                <label for="key-input" class="glow-effect">Masukkan Key:</label>
+                <div class="key-input-wrapper">
+                    <input type="text" id="key-input" class="typing-input" placeholder="Masukkan key..." spellcheck="false">
+                    <button class="generate-key" title="Generate Random Key">
+                        <i class="fas fa-dice"></i>
+                    </button>
+                </div>
+                
+                <input type="hidden" id="cipher-method" value="caesar">
+                
+                <div class="button-group">
+                    <button onclick="encrypt()" class="glow-on-hover">
+                        <i class="fas fa-lock"></i> Enkripsi
+                    </button>
+                    <button onclick="decrypt()" class="glow-on-hover">
+                        <i class="fas fa-unlock"></i> Dekripsi
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="container output-container">
+            <h1 class="typing-effect">Hasil Konversi</h1>
+            <div class="output-section">
+                <div class="output-header">
+                    <label for="result" class="glow-effect">Hasil:</label>
+                    <button onclick="copyToClipboard()" class="copy-button" title="Salin ke clipboard">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <textarea id="result" class="output-text" readonly></textarea>
+                <div class="status-message" id="status-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Helper Section -->
+    <div class="helper-container">
+        <h2 class="helper-title">Panduan Penggunaan</h2>
+        <div class="helper-section">
+            <div class="helper-text with-icon">
+                <i class="fas fa-lightbulb"></i>
+                <span>Enkripsi adalah proses mengubah teks biasa menjadi teks yang tidak dapat dibaca. Gunakan untuk mengamankan pesan Anda.</span>
+            </div>
+            
+            <div class="helper-text with-icon">
+                <i class="fas fa-key"></i>
+                <span>Key adalah kunci rahasia yang digunakan untuk enkripsi dan dekripsi. Pastikan untuk menyimpan key dengan aman.</span>
+            </div>
+            
+            <div class="helper-text with-icon">
+                <i class="fas fa-shield-alt"></i>
+                <span>Semua proses enkripsi dan dekripsi dilakukan secara lokal di browser Anda. Data Anda tidak pernah dikirim ke server.</span>
+            </div>
+
+            <div class="helper-text with-icon">
+                <i class="fas fa-info-circle"></i>
+                <span>Caesar Cipher menggeser setiap huruf sesuai dengan angka key. Contoh: dengan key 3, 'A' menjadi 'D'.</span>
+            </div>
+            
+            <div class="helper-text with-icon">
+                <i class="fas fa-random"></i>
+                <span>Vigenere Cipher menggunakan key berupa kata/kalimat untuk mengenkripsi pesan dengan pola yang lebih kompleks.</span>
+            </div>
+            
+            <div class="helper-text with-icon">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Hasil konversi dapat langsung disalin ke clipboard dengan tombol copy. Pastikan untuk menyimpan hasil dengan aman.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer dengan tanda hak milik -->
+    <footer class="copyright-footer">
+        <div class="copyright-content">
+            <div class="author-info">
+                <span class="author-name">Wahyu Muliadi Siregar</span>
+                <span class="author-npm">223510883</span>
+                <div class="social-links">
+                    <a href="https://instagram.com/wahyu_shiregaru" target="_blank" class="social-link">
+                        <i class="fab fa-instagram"></i>
+                        <span>@wahyu_shiregaru</span>
+                    </a>
+                    <a href="https://github.com/Wahyusrg0819" target="_blank" class="social-link">
+                        <i class="fab fa-github"></i>
+                        <span>@Wahyusrg0819</span>
+                    </a>
+                </div>
+            </div>
+            <div class="copyright-text">
+                <i class="fas fa-code"></i>
+                <span>Web Cryptography Converter</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+    
+    <!-- Modal untuk pemilihan metode -->
+    <div id="method-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Pilih Metode Enkripsi</h3>
+                <button class="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="method-option" data-method="caesar">
+                    <div class="method-info">
+                        <i class="fas fa-lock"></i>
+                        <div class="method-text">
+                            <h4>Caesar Cipher</h4>
+                            <p>Metode enkripsi sederhana dengan pergeseran karakter</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-check check-icon"></i>
+                </div>
+                <div class="method-option" data-method="vigenere">
+                    <div class="method-info">
+                        <i class="fas fa-shield-alt"></i>
+                        <div class="method-text">
+                            <h4>Vigenere Cipher</h4>
+                            <p>Metode enkripsi dengan kunci kata/kalimat</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-check check-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html> 
